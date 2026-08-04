@@ -1,17 +1,31 @@
-from encryption import Encryption
+from .encryption import Encryption
 import json
+import os
 
 
 class Config:
-    def __init__(self):
+    def __init__(self, config_path="data/config.json"):
         self.config_data = None
+        self.config_path = config_path
 
     # Check if the configuration file is finished
     def is_config_finished(self) -> bool:
-        with open("data/config.json", "r") as config_file:
-            self.config_data = json.load(config_file)
+        try:
+            with open(self.config_path, "r") as config_file:
+                self.config_data = json.load(config_file)
+                return self.config_data.get("password") is not None
 
-            return self.config_data.get("password", "unset") != "unset"
+        except FileNotFoundError:
+            config_dir = self.config_path.split("/")[0]
+            os.makedirs(config_dir)
+
+        except json.JSONDecodeError:
+            pass
+
+        finally:
+            self.config_data = {}
+
+        return False
 
     # Ask the user for their new master password
     def get_master_password(self) -> str:
@@ -38,7 +52,7 @@ class Config:
         password_hash = Encryption.hash_password(password)
 
         # Save password
-        with open("data/config.json", "w") as config_file:
+        with open(self.config_path, "w+") as config_file:
             self.config_data["password"] = password_hash
             json.dump(self.config_data, config_file, indent=4)
 
