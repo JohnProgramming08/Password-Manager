@@ -36,5 +36,11 @@ class Encryption:
 
         return ciphertext
 
+    # Decrypt the given string using the users encryption key
+    @staticmethod
+    def decrypt_string(ciphertext: bin, password: str) -> str:
+        key = Encryption.generate_key(password)
+        f = Fernet(key)
+        plaintext = f.decrypt(ciphertext)
 
-Encryption.encrypt_string("sigma male", "test")
+        return plaintext.decode()
