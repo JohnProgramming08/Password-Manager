@@ -57,3 +57,12 @@ class Config:
             json.dump(self.config_data, config_file, indent=4)
 
         print("------------------------------------")
+
+    # Confirm the users master password
+    def confirm_master_password(self) -> None | str:
+        self.init_config_file()
+        password = input("MASTER PASSWORD: ")
+        password_hash = Encryption.hash_password(password)
+
+        if password_hash == self.config_data.get("password"):
+            return password
