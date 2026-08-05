@@ -6,6 +6,7 @@ from .config import Config
 
 class Writer:
     # Add a section to the data vault, returning if successful
+    @staticmethod
     def add_section(section_name: str, vault_path="data/") -> bool:
         valid_vault = os.path.exists(vault_path)
         valid_section = not os.path.exists(vault_path + section_name)
@@ -14,12 +15,19 @@ class Writer:
             print("There was an error creating the section.")
             return False
 
+        # Section is valid
+        config_service = Config()
+        password = config_service.confirm_master_password()
+        if password is None:
+            return False
+
         with open(f"{vault_path}{section_name}.json", "w+") as file:
             file.write("{}")
 
         return True
 
     # Set the value of a field in a section, returning if successful
+    @staticmethod
     def set_field(
         section_name: str, field_name: str, value: str, vault_path="data/"
     ) -> bool:
