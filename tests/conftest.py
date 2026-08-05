@@ -26,3 +26,11 @@ def filled_config_file(empty_config_file):
     test_config_data = {"password": password_hash}
     with open("test/config.json", "w") as file:
         json.dump(test_config_data, file, indent=4)
+
+
+# Filled in config file with an empty section
+@pytest.fixture
+def empty_section(filled_config_file):
+    file = open("test/empty.json", "w+")
+    file.write("{}")
+    file.close()

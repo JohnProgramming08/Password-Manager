@@ -18,14 +18,12 @@ class Config:
         except FileNotFoundError:
             config_dir = self.config_path.split("/")[0]
             os.makedirs(config_dir)
+            self.config_data = {}
+            return False
 
         except json.JSONDecodeError:
-            pass
-
-        finally:
             self.config_data = {}
-
-        return False
+            return False
 
     # Ask the user for their new master password
     def get_master_password(self) -> str:
@@ -54,6 +52,16 @@ class Config:
         # Save password
         with open(self.config_path, "w+") as config_file:
             self.config_data["password"] = password_hash
+            config_file.write("")
             json.dump(self.config_data, config_file, indent=4)
 
         print("------------------------------------")
+
+    # Confirm the users master password
+    def confirm_master_password(self) -> None | str:
+        self.init_config_file()
+        password = input("MASTER PASSWORD: ")
+        password_hash = Encryption.hash_password(password)
+
+        if password_hash == self.config_data.get("password"):
+            return password

@@ -79,3 +79,58 @@ def test_init_config_file_nonexistent(monkeypatch, iterable):
 
     os.remove("test/config.json")
     os.removedirs("test")
+
+
+# Confirm the users master password
+def test_confirm_master_password_filled_valid(filled_config_file, monkeypatch):
+    monkeypatch.setattr("builtins.input", lambda _: "test")
+    service = Config(config_path="test/config.json")
+    assert service.confirm_master_password() == "test"
+
+
+@pytest.mark.parametrize(
+    "input", ["not correct", "tes", "TEST", "boom", "sigma"]
+)
+def test_confirm_master_password_filled_invalid(
+    filled_config_file, monkeypatch, input
+):
+    monkeypatch.setattr("builtins.input", lambda _: input)
+    service = Config(config_path="test/config.json")
+    assert service.confirm_master_password() is None
+
+
+@pytest.mark.parametrize(
+    "iterable, expected",
+    [
+        (["sigma", "sigma", "sigma"], "sigma"),
+        (["not", "equal", "same", "same", "same"], "same"),
+        (["valid", "valid", "not valid"], None),
+        (["not it", "it", "it", "it", "not it"], None),
+    ],
+)
+def test_confirm_master_password_empty(
+    monkeypatch, empty_config_file, iterable, expected
+):
+    inputs = iter(iterable)
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+    service = Config(config_path="test/config.json")
+    assert service.confirm_master_password() == expected
+
+
+@pytest.mark.parametrize(
+    "iterable, expected",
+    [
+        (["test", "test", "test"], "test"),
+        (["test", "test", "nope"], None),
+        (["weird", "not the same", "equal", "equal", "equal"], "equal"),
+        (["weird", "not the same", "equal", "equal", "invalid"], None),
+    ],
+)
+def test_confirm_master_password_nonexistent(monkeypatch, iterable, expected):
+    inputs = iter(iterable)
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+    service = Config(config_path="test/config.json")
+    assert service.confirm_master_password() == expected
+
+    os.remove("test/config.json")
+    os.removedirs("test")
