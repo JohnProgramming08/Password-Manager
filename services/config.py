@@ -18,14 +18,12 @@ class Config:
         except FileNotFoundError:
             config_dir = self.config_path.split("/")[0]
             os.makedirs(config_dir)
+            self.config_data = {}
+            return False
 
         except json.JSONDecodeError:
-            pass
-
-        finally:
             self.config_data = {}
-
-        return False
+            return False
 
     # Ask the user for their new master password
     def get_master_password(self) -> str:
