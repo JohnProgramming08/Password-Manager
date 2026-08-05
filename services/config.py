@@ -52,6 +52,7 @@ class Config:
         # Save password
         with open(self.config_path, "w+") as config_file:
             self.config_data["password"] = password_hash
+            config_file.write("")
             json.dump(self.config_data, config_file, indent=4)
 
         print("------------------------------------")
