@@ -25,7 +25,12 @@ class Reader:
         with open(f"{vault_path}{section}.json", "r") as file:
             section_data = json.load(file)
 
-        encrypted_value = section_data.get(field).encode("utf-8")
+        # Decrypt value
+        encrypted_value = section_data.get(field)
+        if encrypted_value is None:
+            return "empty"
+
+        encrypted_value = encrypted_value.encode("utf-8")
         decrypted_value = Encryption.decrypt_string(encrypted_value, password)
 
         return decrypted_value
