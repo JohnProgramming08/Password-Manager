@@ -1,7 +1,7 @@
 import pytest
 import os
 import json
-from services import Config, Encryption
+from services import Config, Encryption, Writer
 
 
 # Empty config file at test/config.json
@@ -34,3 +34,18 @@ def empty_section(filled_config_file):
     file = open("test/empty.json", "w+")
     file.write("{}")
     file.close()
+
+
+# Section with 3 filled fields
+@pytest.fixture
+def filled_section(filled_config_file):
+    test_data = {
+        "username": Encryption.encrypt_string("sigma", "test").decode(),
+        "password": Encryption.encrypt_string("MORE SIGMA", "test").decode(),
+        "email": Encryption.encrypt_string("test", "test").decode(),
+    }
+    with open("test/filled.json", "w+") as file:
+        json.dump(test_data, file, indent=4)
+
+    yield None
+    os.remove("test/filled.json")
