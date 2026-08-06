@@ -1,0 +1,31 @@
+from .encryption import Encryption
+from .config import Config
+import os
+import json
+
+
+class Reader:
+    # Get the value of a specific field
+    @staticmethod
+    def get_value(section: str, field: str, vault_path="data/") -> str | None:
+        valid_section = os.path.exists(vault_path + section + ".json")
+        valid_vault = os.path.exists(vault_path)
+
+        if not valid_section or not valid_vault:
+            print("There was an error accessing the section.")
+            return None
+
+        # Check user password
+        config_service = Config(config_path=vault_path + "config.json")
+        password = config_service.confirm_master_password()
+        if password is None:
+            return None
+
+        # Section and user password are both valid
+        with open(f"{vault_path}{section}.json", "r") as file:
+            section_data = json.load(file)
+
+        encrypted_value = section_data.get(field).encode("utf-8")
+        decrypted_value = Encryption.decrypt_string(encrypted_value, password)
+
+        return decrypted_value
