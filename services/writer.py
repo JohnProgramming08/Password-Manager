@@ -47,9 +47,11 @@ class Writer:
         encrypted_value = Encryption.encrypt_string(value, password).decode()
 
         # Save encrypted value
-        with open(f"{vault_path}{section_name}.json", "r+") as file:
+        with open(f"{vault_path}{section_name}.json", "r") as file:
             section_data = json.load(file)
             section_data[field_name] = encrypted_value
+
+        with open(f"{vault_path}{section_name}.json", "w") as file:
             file.write("")
             json.dump(section_data, file, indent=4)
 
