@@ -1,7 +1,7 @@
 import pytest
 import os
 import json
-from services import Config, Encryption, Writer
+from services import Config, Encryption
 
 
 # Empty config file at test/config.json

@@ -48,7 +48,7 @@ class Field:
             return False
 
         # Section exists
-        config_service = Config()
+        config_service = Config(config_path=vault_path + "config.json")
         password = config_service.confirm_master_password()
         if password is None:
             return False
