@@ -1,29 +1,18 @@
-from interface.cli import get_arguments
-from services import Config, Reader, Writer
+from interface import CLI, ConfigBridge, SectionBridge, FieldBridge
+from services import Config, Section, Field
 
 
 def main():
-    args = get_arguments()
-    if args.command == "config":
-        confg_service = Config()
-        confg_service.init_config_file()
+    interface = CLI()
+    args = interface.get_args()
 
-    elif args.command == "read" and None not in [args.section, args.field]:
-        print(Reader.get_value(args.section, args.field))
-
-    elif (
-        args.command == "write"
-        and args.subcommand == "section"
-        and args.section is not None
-    ):
-        Writer.add_section(args.section)
-
-    elif (
-        args.command == "write"
-        and args.subcommand == "field"
-        and None not in [args.section, args.field, args.value]
-    ):
-        Writer.set_field(args.section, args.field, args.value)
+    # Determine which subcommand was executed
+    if hasattr(args, "config"):
+        bridge = ConfigBridge(args)
+    if hasattr(args, "section"):
+        bridge = SectionBridge(args)
+    if hasattr(args, "field"):
+        bridge = FieldBridge(args)
 
 
 if __name__ == "__main__":
