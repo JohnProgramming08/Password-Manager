@@ -70,3 +70,5 @@ class Config:
 
         if password_hash == self.config_data.get("password"):
             return password
+        else:
+            print("INCORRECT - COMMAND DENIED")
