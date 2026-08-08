@@ -4,10 +4,10 @@ from services import Field
 class FieldBridge:
     def __init__(self, args):
         self.args = args
-        self.determine_function()
+        self.command = self.determine_function()
 
     # Determine which function to call based on the command
-    def determine_function(self):
+    def determine_function(self) -> str | None:
         args = self.args
         if not hasattr(args, "field"):
             return None
@@ -22,6 +22,7 @@ class FieldBridge:
             Field.set_field(
                 self.args.section_name, self.args.field_name, self.args.value
             )
+            return "set"
 
         # Field get [section_name] [field_name]
         elif (
@@ -30,3 +31,4 @@ class FieldBridge:
             and hasattr(args, "field_name")
         ):
             print(Field.get_value(self.args.section_name, self.args.field_name))
+            return "get"
