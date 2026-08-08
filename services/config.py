@@ -10,17 +10,22 @@ class Config:
 
     # Check if the configuration file is finished
     def is_config_finished(self) -> bool:
+        vault_path = self.config_path.split["/"][0] + "/"
+        # Config file does not exist
+        if not os.path.exists(self.config_path):
+            self.config_data = {}
+            if not os.path.exists(vault_path):
+                os.makedirs(vault_path[:-1])
+
+            return False
+
+        # Config file exists
         try:
             with open(self.config_path, "r") as config_file:
                 self.config_data = json.load(config_file)
                 return self.config_data.get("password") is not None
 
-        except FileNotFoundError:
-            config_dir = self.config_path.split("/")[0]
-            os.makedirs(config_dir)
-            self.config_data = {}
-            return False
-
+        # Config file is empty
         except json.JSONDecodeError:
             self.config_data = {}
             return False
