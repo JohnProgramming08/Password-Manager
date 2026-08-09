@@ -49,3 +49,16 @@ def filled_section(filled_config_file):
 
     yield None
     os.remove("test/filled.json")
+
+
+# Filled in config file with 3 empty sections
+@pytest.fixture
+def many_empty_sections(filled_config_file):
+    file_names = ["one", "two", "three"]
+    for file_name in file_names:
+        with open(f"test/{file_name}.json", "w+") as file:
+            pass
+
+    yield None
+    for file_name in file_names:
+        os.remove(f"test/{file_name}.json")

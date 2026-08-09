@@ -57,3 +57,23 @@ def test_get_value_invalid(monkeypatch, filled_section):
     assert Field.get_value("filled", "username", vault_path="test/") is None
     assert Field.get_value("filled", "username", vault_path="nopety/") is None
     assert Field.get_value("wrong", "username", vault_path="test/") is None
+
+
+# Listing all fields in a section
+def test_list_fields_in_section_filled(filled_section):
+    assert Field.list_fields_in_section("filled", vault_path="test/") != ""
+
+
+def test_list_fields_in_section_empty(empty_section):
+    assert Field.list_fields_in_section("empty", vault_path="test/") == ""
+    os.remove("test/empty.json")
+
+
+# List all fields
+def test_list_fields_filled(filled_section):
+    assert Field.list_fields(vault_path="test/") != ""
+
+
+def test_list_fields_empty(empty_section):
+    assert Field.list_fields(vault_path="test/") == ""
+    os.remove("test/empty.json")
