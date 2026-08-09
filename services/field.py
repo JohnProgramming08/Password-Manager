@@ -70,6 +70,9 @@ class Field:
     @staticmethod
     def list_fields_in_section(section: str, vault_path="data/") -> str:
         file_name = vault_path + section + ".json"
+        if not os.path.exists(file_name):
+            return ""
+
         with open(file_name, "r") as file:
             data = json.load(file)
 

@@ -101,7 +101,7 @@ class CLI:
         )
         field_list_parser.set_defaults(ls="activated")
         field_list_parser.add_argument(
-            "-s", "--section", help="specify a specific section"
+            "-s", "--section_name", help="specify a specific section"
         )
 
     def get_args(self):
