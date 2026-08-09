@@ -20,4 +20,4 @@ class SectionBridge:
         # section ls
         elif hasattr(args, "ls"):
             print(Section.list_sections())
-            return "list"
+            return "ls"
