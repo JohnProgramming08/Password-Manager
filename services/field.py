@@ -77,6 +77,8 @@ class Field:
         for key in data:
             fields += f"{section} {key}\n"
 
+        return fields
+
     # Return a list of all fields and their associated sections
     def list_fields(vault_path="data/") -> str:
         fields = ""
@@ -84,14 +86,16 @@ class Field:
 
         for section in sections:
             # Don't output config fields
-            if section == "config":
+            if section == "config.json":
                 continue
 
-            file_path = f"{vault_path}{section}.json"
+            section_name = section.split(".")[0]
+
+            file_path = f"{vault_path}{section}"
             with open(file_path, "r") as file:
                 data = json.load(file)
 
             for key in data:
-                fields += f"{section} {key}\n"
+                fields += f"[{section_name}] {key}\n"
 
         return fields
