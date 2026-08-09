@@ -23,3 +23,15 @@ class Section:
             file.write("{}")
 
         return True
+
+    # Return a list of all sections the user has made
+    @staticmethod
+    def list_sections(vault_path="data/") -> str:
+        file_list = os.listdir(vault_path)
+        sections = ""
+        for file in file_list:
+            section_name = file.split(".")[0]
+            if section_name != "config":
+                sections += section_name + "\n"
+
+        return sections
