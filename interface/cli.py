@@ -9,9 +9,11 @@ class CLI:
         self.init_config_parser()
         self.init_section_parser()
         self.init_section_create_parser()
+        self.init_section_list_parser()
         self.init_field_parser()
         self.init_field_set_parser()
         self.init_field_get_parser()
+        self.init_field_list_parser()
         self.args = self.parser.parse_args()
 
     # Config parser
@@ -45,6 +47,13 @@ class CLI:
         section_create_parser.add_argument(
             "section_name", help="name the section you want to create"
         )
+
+    # Section list parser
+    def init_section_list_parser(self):
+        section_list_parser = self.section_subparsers.add_parser(
+            "ls", help="list all sections"
+        )
+        section_list_parser.set_defaults(ls="activated")
 
     # Field parser
     def init_field_parser(self):
@@ -83,6 +92,16 @@ class CLI:
         )
         field_get_parser.add_argument(
             "field_name", help="the name of the field"
+        )
+
+    # Field list parser
+    def init_field_list_parser(self):
+        field_list_parser = self.field_subparsers.add_parser(
+            "ls", help="list all fields"
+        )
+        field_list_parser.set_defaults(ls="activated")
+        field_list_parser.add_argument(
+            "-s", "--section_name", help="specify a specific section"
         )
 
     def get_args(self):

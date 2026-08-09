@@ -10,3 +10,9 @@ def test_create(monkeypatch, filled_config_file):
     )
     section_bridge = SectionBridge(args)
     assert section_bridge.command == "create"
+
+
+def test_list(filled_config_file):
+    args = SimpleNamespace(section="activated", ls="activated")
+    section_bridge = SectionBridge(args)
+    assert section_bridge.command == "ls"

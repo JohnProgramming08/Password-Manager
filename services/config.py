@@ -10,7 +10,7 @@ class Config:
 
     # Check if the configuration file is finished
     def is_config_finished(self) -> bool:
-        vault_path = self.config_path.split["/"][0] + "/"
+        vault_path = self.config_path.split("/")[0] + "/"
         # Config file does not exist
         if not os.path.exists(self.config_path):
             self.config_data = {}

@@ -69,3 +69,18 @@ def test_add_section_empty_invalid2(monkeypatch, empty_config_file):
 
 def test_add_section_nonexistent_invalid():
     assert Section.add_section("anything", vault_path="test/") is False
+
+
+# Listing all sections made by the user
+def test_list_sections_none(empty_config_file):
+    assert Section.list_sections(vault_path="test/") == ""
+
+
+def test_list_sections_one(empty_section):
+    assert Section.list_sections(vault_path="test/") == "empty\n"
+    os.remove("test/empty.json")
+
+
+def test_list_sections_many(many_empty_sections):
+    res = "one\nthree\ntwo\n"
+    assert Section.list_sections(vault_path="test/") == res

@@ -65,3 +65,40 @@ class Field:
             json.dump(section_data, file, indent=4)
 
         return True
+
+    # Return a list of all fields in a particular section
+    @staticmethod
+    def list_fields_in_section(section: str, vault_path="data/") -> str:
+        file_name = vault_path + section + ".json"
+        if not os.path.exists(file_name):
+            return ""
+
+        with open(file_name, "r") as file:
+            data = json.load(file)
+
+        fields = ""
+        for key in data:
+            fields += f"{section} {key}\n"
+
+        return fields
+
+    # Return a list of all fields and their associated sections
+    def list_fields(vault_path="data/") -> str:
+        fields = ""
+        sections = os.listdir(vault_path)
+
+        for section in sections:
+            # Don't output config fields
+            if section == "config.json":
+                continue
+
+            section_name = section.split(".")[0]
+
+            file_path = f"{vault_path}{section}"
+            with open(file_path, "r") as file:
+                data = json.load(file)
+
+            for key in data:
+                fields += f"[{section_name}] {key}\n"
+
+        return fields
