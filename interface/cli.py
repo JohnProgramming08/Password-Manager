@@ -10,10 +10,12 @@ class CLI:
         self.init_section_parser()
         self.init_section_create_parser()
         self.init_section_list_parser()
+        self.init_section_remove_parser()
         self.init_field_parser()
         self.init_field_set_parser()
         self.init_field_get_parser()
         self.init_field_list_parser()
+        self.init_field_remove_parser()
         self.args = self.parser.parse_args()
 
     # Config parser
@@ -119,7 +121,7 @@ class CLI:
         field_remove_parser = self.field_subparsers.add_parser(
             "rm", help="remove a field"
         )
-        field_remove_parser.set_defaults(ls="activated")
+        field_remove_parser.set_defaults(rm="activated")
         field_remove_parser.add_argument(
             "section_name", help="specify the section"
         )
