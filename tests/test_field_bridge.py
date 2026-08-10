@@ -51,3 +51,15 @@ def test_ls_section(filled_config_file):
     )
     field_bridge = FieldBridge(args)
     assert field_bridge.command == "ls section"
+
+
+def test_rm(monkeypatch, filled_section):
+    monkeypatch.setattr("builtins.input", lambda _: "test")
+    args = SimpleNamespace(
+        field="activated",
+        rm="activated",
+        section_name="filled",
+        field_name="username",
+    )
+    field_bridge = FieldBridge(args)
+    assert field_bridge.command == "rm"
