@@ -102,3 +102,30 @@ class Field:
                 fields += f"[{section_name}] {key}\n"
 
         return fields
+
+    # Remove a field from a section, returning if successful
+    def remove_field(
+        section_name: str, field_name: str, vault_path="data/"
+    ) -> bool:
+        if not os.path.exists(f"{vault_path}{section_name}.json"):
+            return False
+
+        config_service = Config(config_path=vault_path + "config.json")
+        password = config_service.confirm_master_password()
+        if password is None:
+            return False
+
+        # Fetch the section data
+        file_name = f"{vault_path}{section_name}.json"
+        with open(file_name, "r") as file:
+            file_data = json.load(file)
+            if not file_data.get(field_name):
+                return False
+
+        # Remove the given field
+        with open(file_name, "w") as file:
+            del file_data[field_name]
+            file.write("")
+            json.dump(file_data, file, indent=4)
+
+        return True

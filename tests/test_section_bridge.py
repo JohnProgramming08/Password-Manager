@@ -16,3 +16,12 @@ def test_list(filled_config_file):
     args = SimpleNamespace(section="activated", ls="activated")
     section_bridge = SectionBridge(args)
     assert section_bridge.command == "ls"
+
+
+def test_remove(monkeypatch, many_empty_sections):
+    monkeypatch.setattr("builtins.input", lambda _: "test")
+    args = SimpleNamespace(
+        section="activated", rm="activated", section_name="two"
+    )
+    section_bridge = SectionBridge(args)
+    assert section_bridge.command == "rm"

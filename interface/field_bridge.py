@@ -46,3 +46,8 @@ class FieldBridge:
         elif hasattr(args, "ls"):
             print(Field.list_fields())
             return "ls"
+
+        # field rm [section_name] [field_name]
+        elif hasattr(args, "rm") and args.section_name and args.field_name:
+            Field.remove_field(args.section_name, args.field_name)
+            return "rm"

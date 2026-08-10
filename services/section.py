@@ -35,3 +35,17 @@ class Section:
                 sections += section_name + "\n"
 
         return sections
+
+    # Attempt to remove a section, returning if successful
+    @staticmethod
+    def remove_section(section_name: str, vault_path="data/") -> bool:
+        if not os.path.exists(f"{vault_path}{section_name}.json"):
+            return False
+
+        config_service = Config(config_path=vault_path + "config.json")
+        password = config_service.confirm_master_password()
+        if password is None:
+            return False
+
+        os.remove(f"{vault_path}{section_name}.json")
+        return True

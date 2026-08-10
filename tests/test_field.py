@@ -77,3 +77,21 @@ def test_list_fields_filled(filled_section):
 def test_list_fields_empty(empty_section):
     assert Field.list_fields(vault_path="test/") == ""
     os.remove("test/empty.json")
+
+
+# Remove a field of a section
+@pytest.mark.parametrize("field", ["username", "password", "email"])
+def test_remove_field_valid(monkeypatch, filled_section, field):
+    monkeypatch.setattr("builtins.input", lambda _: "test")
+    assert Field.remove_field("filled", field, vault_path="test/") is True
+
+
+def test_remove_field_invalid1(monkeypatch, filled_section):
+    monkeypatch.setattr("builtins.input", lambda _: "test")
+    assert Field.remove_field("empty", "username", vault_path="test/") is False
+    assert Field.remove_field("filled", "invalid", vault_path="test/") is False
+
+
+def test_remove_field_invalid2(monkeypatch, filled_section):
+    monkeypatch.setattr("builtins.input", lambda _: "sigma")
+    assert Field.remove_field("filled", "username", vault_path="test/") is False

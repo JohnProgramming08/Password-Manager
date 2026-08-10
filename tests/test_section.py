@@ -84,3 +84,19 @@ def test_list_sections_one(empty_section):
 def test_list_sections_many(many_empty_sections):
     res = "one\nthree\ntwo\n"
     assert Section.list_sections(vault_path="test/") == res
+
+
+# Removing a section
+@pytest.mark.parametrize("section_name", ["one", "two", "three"])
+def test_remove_section_valid(monkeypatch, many_empty_sections, section_name):
+    monkeypatch.setattr("builtins.input", lambda _: "test")
+    assert Section.remove_section(section_name, vault_path="test/") is True
+
+
+def test_remove_section_invalid1(many_empty_sections):
+    assert Section.remove_section("four", vault_path="test/") is False
+
+
+def test_remove_section_invalid2(monkeypatch, many_empty_sections):
+    monkeypatch.setattr("builtins.input", lambda _: "wrong")
+    assert Section.remove_section("one", vault_path="test/") is False
