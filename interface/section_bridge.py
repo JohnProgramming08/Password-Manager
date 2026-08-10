@@ -21,3 +21,7 @@ class SectionBridge:
         elif hasattr(args, "ls"):
             print(Section.list_sections())
             return "ls"
+
+        # section rm [section_name]
+        elif hasattr(args, "rm") and args.section_name:
+            Section.remove_section(args.section_name)
