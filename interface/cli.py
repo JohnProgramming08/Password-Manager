@@ -55,6 +55,16 @@ class CLI:
         )
         section_list_parser.set_defaults(ls="activated")
 
+    # Section remove parser
+    def init_section_remove_parser(self):
+        section_remove_parser = self.section_subparsers.add_parser(
+            "rm", help="remove a section"
+        )
+        section_remove_parser.set_defaults(rm="activated")
+        section_remove_parser.add_argument(
+            "section_name", help="specify a section"
+        )
+
     # Field parser
     def init_field_parser(self):
         field_parser = self.subparsers.add_parser(
@@ -103,6 +113,17 @@ class CLI:
         field_list_parser.add_argument(
             "-s", "--section_name", help="specify a specific section"
         )
+
+    # Field remove parser
+    def init_field_remove_parser(self):
+        field_remove_parser = self.field_subparsers.add_parser(
+            "rm", help="remove a field"
+        )
+        field_remove_parser.set_defaults(ls="activated")
+        field_remove_parser.add_argument(
+            "section_name", help="specify the section"
+        )
+        field_remove_parser.add_argument("field_name", help="specify the field")
 
     def get_args(self):
         return self.args
