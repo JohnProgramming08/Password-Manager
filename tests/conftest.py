@@ -48,7 +48,11 @@ def filled_section(filled_config_file):
         json.dump(test_data, file, indent=4)
 
     yield None
-    os.remove("test/filled.json")
+
+    try:
+        os.remove("test/filled.json")
+    except:
+        pass
 
 
 # Filled in config file with 3 empty sections
@@ -60,5 +64,9 @@ def many_empty_sections(filled_config_file):
             pass
 
     yield None
+
     for file_name in file_names:
-        os.remove(f"test/{file_name}.json")
+        try:
+            os.remove(f"test/{file_name}.json")
+        except:
+            pass
