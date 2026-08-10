@@ -113,7 +113,7 @@ class Field:
         config_service = Config(config_path=vault_path + "config.json")
         password = config_service.confirm_master_password()
         if password is None:
-            return
+            return False
 
         # Fetch the section data
         file_name = f"{vault_path}{section_name}.json"
@@ -127,3 +127,5 @@ class Field:
             del file_data[field_name]
             file.write("")
             json.dump(file_data, file, indent=4)
+
+        return True

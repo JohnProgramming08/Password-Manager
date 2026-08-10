@@ -48,3 +48,4 @@ class Section:
             return False
 
         os.remove(f"{vault_path}{section_name}.json")
+        return True
