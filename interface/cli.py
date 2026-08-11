@@ -115,6 +115,9 @@ class CLI:
         field_list_parser.add_argument(
             "-s", "--section_name", help="specify a specific section"
         )
+        field_list_parser.add_argument(
+            "-v", "--values", help="enable field values", action="store_true"
+        )
 
     # Field remove parser
     def init_field_remove_parser(self):

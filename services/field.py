@@ -29,12 +29,12 @@ class Field:
         # Decrypt value
         encrypted_value = section_data.get(field)
         if encrypted_value is None:
-            return f"[{section}] empty"
+            return f"[{section}] {field} = empty"
 
         encrypted_value = encrypted_value.encode("utf-8")
         decrypted_value = Encryption.decrypt_string(encrypted_value, password)
 
-        return f"[{section}] {decrypted_value}"
+        return f"[{section}] {field} = {decrypted_value}"
 
     # Set the value of a field in a section, returning if successful
     @staticmethod
@@ -71,24 +71,46 @@ class Field:
 
     # Return a list of all fields in a particular section
     @staticmethod
-    def list_fields_in_section(section: str, vault_path="data/") -> str:
+    def list_fields_in_section(
+        section: str, vault_path="data/", values=False
+    ) -> str:
         file_name = vault_path + section + ".json"
         if not os.path.exists(file_name):
             return ""
+
+        # Section exists
+        if values:
+            config_service = Config(config_path=vault_path + "config.json")
+            password = config_service.confirm_master_password()
+            if password is None:
+                return ""
 
         with open(file_name, "r") as file:
             data = json.load(file)
 
         fields = ""
         for key in data:
-            fields += f"{section} {key}\n"
+            if values:
+                encrypted_value = data[key].encode("utf-8")
+                decrypted_value = Encryption.decrypt_string(
+                    encrypted_value, password
+                )
+                fields += f"[{section}] {key} = {decrypted_value}\n"
+            else:
+                fields += f"[{section}] {key}\n"
 
         return fields[:-1]
 
     # Return a list of all fields and their associated sections
-    def list_fields(vault_path="data/") -> str:
+    def list_fields(vault_path="data/", values=False) -> str:
         fields = ""
         sections = os.listdir(vault_path)
+
+        if values:
+            config_service = Config(config_path=vault_path + "config.json")
+            password = config_service.confirm_master_password()
+            if password is None:
+                return ""
 
         for section in sections:
             # Don't output config fields
@@ -102,7 +124,14 @@ class Field:
                 data = json.load(file)
 
             for key in data:
-                fields += f"[{section_name}] {key}\n"
+                if values:
+                    encrypted_value = data[key].encode("utf-8")
+                    decrypted_value = Encryption.decrypt_string(
+                        encrypted_value, password
+                    )
+                    fields += f"[{section_name}] {key} = {decrypted_value}\n"
+                else:
+                    fields += f"[{section_name}] {key}\n"
 
         return fields[:-1]
 
