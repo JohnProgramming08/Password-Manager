@@ -1,8 +1,10 @@
 from interface import CLI, ConfigBridge, SectionBridge, FieldBridge
 from services import Config, Section, Field
+import logging
 
 
 def main():
+    logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.DEBUG)
     interface = CLI()
     args = interface.get_args()
 

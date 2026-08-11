@@ -1,4 +1,5 @@
 import os
+import logging
 from .config import Config
 
 
@@ -10,7 +11,7 @@ class Section:
         valid_section = not os.path.exists(vault_path + section_name + ".json")
 
         if not valid_section or not valid_vault:
-            print("There was an error creating the section.")
+            logging.error(" SECTION COULD NOT BE CREATED")
             return False
 
         # Section is valid
@@ -21,6 +22,8 @@ class Section:
 
         with open(f"{vault_path}{section_name}.json", "w+") as file:
             file.write("{}")
+
+        logging.info(f" SECTION CREATED - {section_name}")
 
         return True
 
@@ -34,12 +37,13 @@ class Section:
             if section_name != "config":
                 sections += section_name + "\n"
 
-        return sections
+        return sections[:-1]
 
     # Attempt to remove a section, returning if successful
     @staticmethod
     def remove_section(section_name: str, vault_path="data/") -> bool:
         if not os.path.exists(f"{vault_path}{section_name}.json"):
+            logging.error(" SECTION DOES NOT EXIST")
             return False
 
         config_service = Config(config_path=vault_path + "config.json")
@@ -48,4 +52,6 @@ class Section:
             return False
 
         os.remove(f"{vault_path}{section_name}.json")
+        logging.info(f" SECTION REMOVED - {section_name}")
+
         return True

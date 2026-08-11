@@ -1,6 +1,8 @@
 from .encryption import Encryption
 import json
 import os
+import getpass
+import logging
 
 
 class Config:
@@ -32,13 +34,18 @@ class Config:
 
     # Ask the user for their new master password
     def get_master_password(self) -> str:
-        print("YOUR MASTER PASSWORD CANNOT BE CHANGED")
+        logging.info(" YOUR MASTER PASSWORD CANNOT BE CHANGED")
 
         password = ""
         confirm_password = ""
         while not password or confirm_password != password:
-            password = input("MASTER PASSWORD: ")
-            confirm_password = input("CONFIRM MASTER PASSWORD: ")
+            password = getpass.getpass("MASTER PASSWORD: ")
+            confirm_password = getpass.getpass("CONFIRM MASTER PASSWORD: ")
+
+            if password != confirm_password:
+                logging.error(" PASSWORDS DON'T MATCH")
+
+        logging.info(" PASSWORD SUCCESSFULLY SET")
 
         return password
 
@@ -65,10 +72,10 @@ class Config:
     # Confirm the users master password
     def confirm_master_password(self) -> None | str:
         self.init_config_file()
-        password = input("MASTER PASSWORD: ")
+        password = getpass.getpass("MASTER PASSWORD: ")
         password_hash = Encryption.hash_password(password)
 
         if password_hash == self.config_data.get("password"):
             return password
         else:
-            print("INCORRECT - COMMAND DENIED")
+            logging.error(" COMMAND DENIED")
