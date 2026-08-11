@@ -43,12 +43,20 @@ class FieldBridge:
             and hasattr(args, "section_name")
             and args.section_name
         ):
-            print(Field.list_fields_in_section(args.section_name))
+            list_output = Field.list_fields_in_section(
+                args.section_name, values=args.values
+            )
+            if list_output:
+                print(list_output)
+
             return "ls section"
 
         # field ls
         elif hasattr(args, "ls"):
-            print(Field.list_fields())
+            list_output = Field.list_fields(values=args.values)
+            if list_output:
+                print(list_output)
+
             return "ls"
 
         # field rm [section_name] [field_name]

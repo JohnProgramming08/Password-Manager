@@ -40,10 +40,10 @@ def test_set_field_invalid(monkeypatch, empty_section):
 @pytest.mark.parametrize(
     "field, expected",
     [
-        ("username", "[filled] sigma"),
-        ("password", "[filled] MORE SIGMA"),
-        ("email", "[filled] test"),
-        ("not a field", "[filled] empty"),
+        ("username", "[filled] username = sigma"),
+        ("password", "[filled] password = MORE SIGMA"),
+        ("email", "[filled] email = test"),
+        ("not a field", "[filled] not a field = empty"),
     ],
 )
 def test_get_value_valid(monkeypatch, filled_section, field, expected):
