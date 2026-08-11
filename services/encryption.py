@@ -1,18 +1,41 @@
 import hashlib
 from cryptography.fernet import Fernet
 import base64
+from argon2 import PasswordHasher
 
 
 class Encryption:
     # Hash the given password
     @staticmethod
     def hash_password(password: str) -> str:
-        full_hashed_password = int(
-            hashlib.sha256(password.encode("utf-8")).hexdigest(), 16
+        hasher = PasswordHasher(
+            time_cost=3,
+            memory_cost=65536,  # 64 MiB
+            parallelism=4,
+            hash_len=32,
+            salt_len=16,
         )
-        password_hash = full_hashed_password % (10**8)
+
+        password_hash = hasher.hash(password)
 
         return str(password_hash)
+
+    # Verify a given password
+    @staticmethod
+    def verify_password(password: str, expected_hash: str) -> bool:
+        hasher = PasswordHasher(
+            time_cost=3,
+            memory_cost=65536,  # 64 MB
+            parallelism=4,
+            hash_len=32,
+            salt_len=16,
+        )
+
+        try:
+            hasher.verify(expected_hash, password)
+            return True
+        except:
+            return False
 
     # Generate the encryption/decryption key from the master password
     @staticmethod
