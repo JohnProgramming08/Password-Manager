@@ -40,14 +40,14 @@ def test_get(monkeypatch, filled_config_file):
 
 
 def test_ls(filled_config_file):
-    args = SimpleNamespace(field="activated", ls="activated")
+    args = SimpleNamespace(field="activated", ls="activated", values=False)
     field_bridge = FieldBridge(args)
     assert field_bridge.command == "ls"
 
 
 def test_ls_section(filled_config_file):
     args = SimpleNamespace(
-        field="activated", ls="activated", section_name="config"
+        field="activated", ls="activated", section_name="config", values=False
     )
     field_bridge = FieldBridge(args)
     assert field_bridge.command == "ls section"
