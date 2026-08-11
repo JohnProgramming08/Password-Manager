@@ -73,9 +73,9 @@ class Config:
     def confirm_master_password(self) -> None | str:
         self.init_config_file()
         password = getpass.getpass("MASTER PASSWORD: ")
-        password_hash = Encryption.hash_password(password)
+        expected_hash = self.config_data.get("password")
 
-        if password_hash == self.config_data.get("password"):
+        if Encryption.verify_password(password, expected_hash):
             return password
         else:
             logging.error(" COMMAND DENIED")
