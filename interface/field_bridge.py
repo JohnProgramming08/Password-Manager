@@ -30,7 +30,11 @@ class FieldBridge:
             and hasattr(args, "section_name")
             and hasattr(args, "field_name")
         ):
-            print(Field.get_value(self.args.section_name, self.args.field_name))
+            value = Field.get_value(
+                self.args.section_name, self.args.field_name
+            )
+            if value is not None:
+                print(value)
             return "get"
 
         # field ls [section_name]

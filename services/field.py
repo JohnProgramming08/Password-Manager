@@ -2,6 +2,7 @@ from .encryption import Encryption
 from .config import Config
 import os
 import json
+import logging
 
 
 class Field:
@@ -12,7 +13,7 @@ class Field:
         valid_vault = os.path.exists(vault_path)
 
         if not valid_section or not valid_vault:
-            print("There was an error accessing the section.")
+            logging.error(" SECTION DOES NOT EXIST")
             return None
 
         # Check user password
@@ -28,12 +29,12 @@ class Field:
         # Decrypt value
         encrypted_value = section_data.get(field)
         if encrypted_value is None:
-            return "empty"
+            return f"[{section}] empty"
 
         encrypted_value = encrypted_value.encode("utf-8")
         decrypted_value = Encryption.decrypt_string(encrypted_value, password)
 
-        return decrypted_value
+        return f"[{section}] {decrypted_value}"
 
     # Set the value of a field in a section, returning if successful
     @staticmethod
@@ -44,7 +45,7 @@ class Field:
         valid_section = os.path.exists(vault_path + section_name + ".json")
 
         if not valid_vault or not valid_section:
-            print("There was an error setting the value of the field.")
+            logging.error(" SECTION NOT FOUND")
             return False
 
         # Section exists
@@ -64,6 +65,8 @@ class Field:
             file.write("")
             json.dump(section_data, file, indent=4)
 
+        logging.info(f" FIELD SET - [{section_name}] {field_name}")
+
         return True
 
     # Return a list of all fields in a particular section
@@ -80,7 +83,7 @@ class Field:
         for key in data:
             fields += f"{section} {key}\n"
 
-        return fields
+        return fields[:-1]
 
     # Return a list of all fields and their associated sections
     def list_fields(vault_path="data/") -> str:
@@ -101,13 +104,14 @@ class Field:
             for key in data:
                 fields += f"[{section_name}] {key}\n"
 
-        return fields
+        return fields[:-1]
 
     # Remove a field from a section, returning if successful
     def remove_field(
         section_name: str, field_name: str, vault_path="data/"
     ) -> bool:
         if not os.path.exists(f"{vault_path}{section_name}.json"):
+            logging.error(" SECTION DOES NOT EXIST")
             return False
 
         config_service = Config(config_path=vault_path + "config.json")
@@ -120,6 +124,7 @@ class Field:
         with open(file_name, "r") as file:
             file_data = json.load(file)
             if not file_data.get(field_name):
+                logging.error(" FIELD DOES NOT EXIST")
                 return False
 
         # Remove the given field
@@ -128,4 +133,5 @@ class Field:
             file.write("")
             json.dump(file_data, file, indent=4)
 
+        logging.info(f" FIELD REMOVED - [{section_name}] {field_name}")
         return True

@@ -4,7 +4,7 @@ import os
 
 
 def test_create(monkeypatch, filled_config_file):
-    monkeypatch.setattr("builtins.input", lambda _: "test")
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
     args = SimpleNamespace(
         section="activated", create="activated", section_name="sigma"
     )
@@ -19,7 +19,7 @@ def test_list(filled_config_file):
 
 
 def test_remove(monkeypatch, many_empty_sections):
-    monkeypatch.setattr("builtins.input", lambda _: "test")
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
     args = SimpleNamespace(
         section="activated", rm="activated", section_name="two"
     )

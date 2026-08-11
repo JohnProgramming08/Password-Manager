@@ -34,7 +34,7 @@ def test_is_config_finished_true(filled_config_file):
 )
 def test_get_master_password(monkeypatch, iterable, password):
     inputs = iter(iterable)
-    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+    monkeypatch.setattr("getpass.getpass", lambda _: next(inputs))
     service = Config(config_path="test/config.json")
 
     assert service.get_master_password() == password
@@ -56,7 +56,7 @@ def test_init_config_file_filled(filled_config_file):
 )
 def test_init_config_file_empty(monkeypatch, empty_config_file, iterable):
     inputs = iter(iterable)
-    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+    monkeypatch.setattr("getpass.getpass", lambda _: next(inputs))
 
     service = Config(config_path="test/config.json")
     service.init_config_file()
@@ -72,7 +72,7 @@ def test_init_config_file_empty(monkeypatch, empty_config_file, iterable):
 )
 def test_init_config_file_nonexistent(monkeypatch, iterable):
     inputs = iter(iterable)
-    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+    monkeypatch.setattr("getpass.getpass", lambda _: next(inputs))
 
     service = Config(config_path="test/config.json")
     service.init_config_file()
@@ -83,7 +83,7 @@ def test_init_config_file_nonexistent(monkeypatch, iterable):
 
 # Confirm the users master password
 def test_confirm_master_password_filled_valid(filled_config_file, monkeypatch):
-    monkeypatch.setattr("builtins.input", lambda _: "test")
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
     service = Config(config_path="test/config.json")
     assert service.confirm_master_password() == "test"
 
@@ -94,7 +94,7 @@ def test_confirm_master_password_filled_valid(filled_config_file, monkeypatch):
 def test_confirm_master_password_filled_invalid(
     filled_config_file, monkeypatch, input
 ):
-    monkeypatch.setattr("builtins.input", lambda _: input)
+    monkeypatch.setattr("getpass.getpass", lambda _: input)
     service = Config(config_path="test/config.json")
     assert service.confirm_master_password() is None
 
@@ -112,7 +112,7 @@ def test_confirm_master_password_empty(
     monkeypatch, empty_config_file, iterable, expected
 ):
     inputs = iter(iterable)
-    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+    monkeypatch.setattr("getpass.getpass", lambda _: next(inputs))
     service = Config(config_path="test/config.json")
     assert service.confirm_master_password() == expected
 
@@ -128,7 +128,7 @@ def test_confirm_master_password_empty(
 )
 def test_confirm_master_password_nonexistent(monkeypatch, iterable, expected):
     inputs = iter(iterable)
-    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+    monkeypatch.setattr("getpass.getpass", lambda _: next(inputs))
     service = Config(config_path="test/config.json")
     assert service.confirm_master_password() == expected
 

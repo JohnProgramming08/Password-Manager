@@ -13,7 +13,7 @@ def test_none():
 
 
 def test_set(monkeypatch, filled_config_file):
-    monkeypatch.setattr("builtins.input", lambda _: "test")
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
 
     args = SimpleNamespace(
         field="activated",
@@ -27,7 +27,7 @@ def test_set(monkeypatch, filled_config_file):
 
 
 def test_get(monkeypatch, filled_config_file):
-    monkeypatch.setattr("builtins.input", lambda _: "test")
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
 
     args = SimpleNamespace(
         field="activated",
@@ -54,7 +54,7 @@ def test_ls_section(filled_config_file):
 
 
 def test_rm(monkeypatch, filled_section):
-    monkeypatch.setattr("builtins.input", lambda _: "test")
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
     args = SimpleNamespace(
         field="activated",
         rm="activated",

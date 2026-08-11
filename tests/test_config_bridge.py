@@ -12,7 +12,7 @@ def test_none(empty_config_file):
 
 # config init
 def test_init(monkeypatch, empty_config_file):
-    monkeypatch.setattr("builtins.input", lambda _: "sigma")
+    monkeypatch.setattr("getpass.getpass", lambda _: "sigma")
 
     args = SimpleNamespace(config="activated", command="init")
     config_bridge = ConfigBridge(args)

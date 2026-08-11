@@ -14,7 +14,7 @@ from services import Field
     ],
 )
 def test_set_field_valid(monkeypatch, empty_section, field_name, value):
-    monkeypatch.setattr("builtins.input", lambda _: "test")
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
     assert (
         Field.set_field("empty", field_name, value, vault_path="test/") is True
     )
@@ -24,7 +24,7 @@ def test_set_field_valid(monkeypatch, empty_section, field_name, value):
 
 def test_set_field_invalid(monkeypatch, empty_section):
     inputs = iter(["not correct", "test", "test"])
-    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+    monkeypatch.setattr("getpass.getpass", lambda _: next(inputs))
     assert Field.set_field("empty", "fine", "fine", vault_path="test/") is False
     assert (
         Field.set_field("invalid", "fine", "fine", vault_path="test/") is False
@@ -40,20 +40,20 @@ def test_set_field_invalid(monkeypatch, empty_section):
 @pytest.mark.parametrize(
     "field, expected",
     [
-        ("username", "sigma"),
-        ("password", "MORE SIGMA"),
-        ("email", "test"),
-        ("not a field", "empty"),
+        ("username", "[filled] sigma"),
+        ("password", "[filled] MORE SIGMA"),
+        ("email", "[filled] test"),
+        ("not a field", "[filled] empty"),
     ],
 )
 def test_get_value_valid(monkeypatch, filled_section, field, expected):
-    monkeypatch.setattr("builtins.input", lambda _: "test")
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
     assert Field.get_value("filled", field, vault_path="test/") == expected
 
 
 def test_get_value_invalid(monkeypatch, filled_section):
     inputs = iter(["incorrect", "test", "test"])
-    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+    monkeypatch.setattr("getpass.getpass", lambda _: next(inputs))
     assert Field.get_value("filled", "username", vault_path="test/") is None
     assert Field.get_value("filled", "username", vault_path="nopety/") is None
     assert Field.get_value("wrong", "username", vault_path="test/") is None
@@ -82,16 +82,16 @@ def test_list_fields_empty(empty_section):
 # Remove a field of a section
 @pytest.mark.parametrize("field", ["username", "password", "email"])
 def test_remove_field_valid(monkeypatch, filled_section, field):
-    monkeypatch.setattr("builtins.input", lambda _: "test")
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
     assert Field.remove_field("filled", field, vault_path="test/") is True
 
 
 def test_remove_field_invalid1(monkeypatch, filled_section):
-    monkeypatch.setattr("builtins.input", lambda _: "test")
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
     assert Field.remove_field("empty", "username", vault_path="test/") is False
     assert Field.remove_field("filled", "invalid", vault_path="test/") is False
 
 
 def test_remove_field_invalid2(monkeypatch, filled_section):
-    monkeypatch.setattr("builtins.input", lambda _: "sigma")
+    monkeypatch.setattr("getpass.getpass", lambda _: "sigma")
     assert Field.remove_field("filled", "username", vault_path="test/") is False
