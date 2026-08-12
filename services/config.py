@@ -32,8 +32,8 @@ class Config:
             self.config_data = {}
             return False
 
-    # Ask the user for their new master password
-    def get_master_password(self) -> str:
+    # Set the users master password
+    def set_master_password(self) -> str:
         logging.info(" YOUR MASTER PASSWORD CANNOT BE CHANGED")
 
         password = ""
@@ -45,9 +45,46 @@ class Config:
             if password != confirm_password:
                 logging.error(" PASSWORDS DON'T MATCH")
 
+        # Save the users password
+        password_hash = Encryption.hash_password(password)
+        with open(self.config_path, "w+") as config_file:
+            self.config_data["password"] = password_hash
+            config_file.write("")
+            json.dump(self.config_data, config_file, indent=4)
+
         logging.info(" PASSWORD SUCCESSFULLY SET")
 
         return password
+
+    # Set the maximum number of failed password attempts
+    def set_failed_attempts_limit(self) -> bool:
+        self.init_config_file()
+
+        print(
+            "Third parties may attempt to access your data. You can choose a failed password attempt limit that takes action after x failed attempts"
+        )
+        keep_going = input("Would you like to set an attempt limit (Y/N)? ")
+        if keep_going != "Y":
+            return False
+
+        # User would like to set an attempt limit
+        attempt_limit = input("ATTEMPT LIMIT: ")
+        if not attempt_limit.isdigit():
+            logging.error(" YOUR INPUT MUST BE AN INTEGER")
+            return False
+
+        password = self.confirm_master_password()
+        if password is None:
+            return False
+
+        # Save the users attempt limit
+        with open(self.config_path, "w+") as config_file:
+            self.config_data["attempt_limit"] = attempt_limit
+            self.config_data["attempts"] = 0
+            config_file.write("")
+            json.dump(self.config_data, config_file, indent=4)
+
+        return True
 
     # Ask the user to fill in the config file if not done so already
     def init_config_file(self) -> None:
@@ -58,14 +95,8 @@ class Config:
         print("------------------------------------")
         print("PASSWORD MANAGER CONFIG")
 
-        password = self.get_master_password()
-        password_hash = Encryption.hash_password(password)
-
-        # Save password
-        with open(self.config_path, "w+") as config_file:
-            self.config_data["password"] = password_hash
-            config_file.write("")
-            json.dump(self.config_data, config_file, indent=4)
+        # Set the users password
+        password = self.set_master_password()
 
         print("------------------------------------")
 
