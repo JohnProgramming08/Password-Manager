@@ -46,15 +46,6 @@ class Config:
             if password != confirm_password:
                 logging.error(" PASSWORDS DON'T MATCH")
 
-        # Save the users password
-        password_hash = Encryption.hash_password(password)
-        with open(self.config_path, "w+") as config_file:
-            self.config_data["password"] = password_hash
-            config_file.write("")
-            json.dump(self.config_data, config_file, indent=4)
-
-        logging.info(" PASSWORD SUCCESSFULLY SET")
-
         return password
 
     # Set the maximum number of failed password attempts
@@ -62,7 +53,7 @@ class Config:
         self.init_config_file()
 
         print(
-            "Third parties may attempt to access your data. You can choose a failed password attempt limit that takes action after x failed attempts"
+            "Third parties may attempt to access your data. You can choose a failed password attempt limit that wipes data after x failed attempts"
         )
         keep_going = input("Would you like to set an attempt limit (Y/N)? ")
         if keep_going != "Y":
@@ -96,8 +87,16 @@ class Config:
         print("------------------------------------")
         print("PASSWORD MANAGER CONFIG")
 
-        # Set the users password
+        # Set and save the users password
         password = self.set_master_password()
+        password_hash = Encryption.hash_password(password)
+
+        with open(self.config_path, "w+") as config_file:
+            self.config_data["password"] = password_hash
+            config_file.write("")
+            json.dump(self.config_data, config_file, indent=4)
+
+        logging.info(" PASSWORD SUCCESSFULLY SET")
 
         print("------------------------------------")
 
