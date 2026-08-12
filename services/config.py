@@ -3,6 +3,7 @@ import json
 import os
 import getpass
 import logging
+import shutil
 
 
 class Config:
@@ -69,7 +70,7 @@ class Config:
 
         # User would like to set an attempt limit
         attempt_limit = input("ATTEMPT LIMIT: ")
-        if not attempt_limit.isdigit():
+        if not attempt_limit.isdigit() or int(attempt_limit) < 1:
             logging.error(" YOUR INPUT MUST BE AN INTEGER")
             return False
 
@@ -107,6 +108,36 @@ class Config:
         expected_hash = self.config_data.get("password")
 
         if Encryption.verify_password(password, expected_hash):
+            self.update_password_attempts(True)
             return password
         else:
+            self.update_password_attempts(False)
             logging.error(" COMMAND DENIED")
+
+    # Update a users password attempts, returning if they have reached the limit
+    def update_password_attempts(self, correct_password: bool) -> bool:
+        if self.config_data.get("attempts_limit") is None:
+            return False
+
+        # User has set an attempt limit
+        attempts = int(self.config_data["attempts"]) + 1
+        attempt_limit = int(self.config_data["attempt_limit"])
+
+        if correct_password:
+            self.config_data["attempts"] = "0"
+        else:
+            self.config_data["attempts"] = str(attempts)
+
+        # Save attempts
+        if attempts < attempt_limit:
+            with open(self.config_path, "w+") as config_file:
+                config_file.write("")
+                json.dump(self.config_data, config_file, indent=4)
+                return False
+
+        # User has reached max failed attempts
+        vault_path = self.config_path.split("/")[0]
+        shutil.rmtree(vault_path)
+        logging.error(" ALL DATA HAS BEEN WIPED")
+
+        return True
