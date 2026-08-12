@@ -33,8 +33,8 @@ class Config:
             self.config_data = {}
             return False
 
-    # Set the users master password
-    def set_master_password(self) -> str:
+    # Ask the user for the proposed master password
+    def choose_master_password(self) -> str:
         logging.info(" YOUR MASTER PASSWORD CANNOT BE CHANGED")
 
         password = ""
@@ -88,7 +88,7 @@ class Config:
         print("PASSWORD MANAGER CONFIG")
 
         # Set and save the users password
-        password = self.set_master_password()
+        password = self.choose_master_password()
         password_hash = Encryption.hash_password(password)
 
         with open(self.config_path, "w+") as config_file:

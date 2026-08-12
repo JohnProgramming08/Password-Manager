@@ -32,12 +32,12 @@ def test_is_config_finished_true(filled_config_file):
         (("", "", "fine", "", "fine", "fine"), "fine"),
     ],
 )
-def test_set_master_password(monkeypatch, iterable, password):
+def test_choose_master_password(monkeypatch, iterable, password):
     inputs = iter(iterable)
     monkeypatch.setattr("getpass.getpass", lambda _: next(inputs))
     service = Config(config_path="test/config.json")
 
-    assert service.set_master_password() == password
+    assert service.choose_master_password() == password
 
 
 # Ask the user to fill in the config file if not already filled
