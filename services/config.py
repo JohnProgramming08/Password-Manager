@@ -3,6 +3,7 @@ import json
 import os
 import getpass
 import logging
+import shutil
 
 
 class Config:
@@ -32,8 +33,8 @@ class Config:
             self.config_data = {}
             return False
 
-    # Ask the user for their new master password
-    def get_master_password(self) -> str:
+    # Ask the user for the proposed master password
+    def choose_master_password(self) -> str:
         logging.info(" YOUR MASTER PASSWORD CANNOT BE CHANGED")
 
         password = ""
@@ -45,9 +46,30 @@ class Config:
             if password != confirm_password:
                 logging.error(" PASSWORDS DON'T MATCH")
 
-        logging.info(" PASSWORD SUCCESSFULLY SET")
-
         return password
+
+    # Set the maximum number of failed password attempts
+    def set_attempt_limit(self, attempt_limit: int) -> bool:
+        self.init_config_file()
+
+        if type(attempt_limit) != int or attempt_limit < 1:
+            logging.error(" ATTEMPT LIMIT MUST BE ABOVE 0")
+            return False
+
+        password = self.confirm_master_password()
+        if password is None:
+            return False
+
+        # Save the users attempt limit
+        with open(self.config_path, "w+") as config_file:
+            self.config_data["attempt_limit"] = str(attempt_limit)
+            self.config_data["attempts"] = "0"
+            config_file.write("")
+            json.dump(self.config_data, config_file, indent=4)
+
+        logging.info(" ATTEMPT LIMIT SUCCESSFULLY SET")
+
+        return True
 
     # Ask the user to fill in the config file if not done so already
     def init_config_file(self) -> None:
@@ -58,14 +80,16 @@ class Config:
         print("------------------------------------")
         print("PASSWORD MANAGER CONFIG")
 
-        password = self.get_master_password()
+        # Set and save the users password
+        password = self.choose_master_password()
         password_hash = Encryption.hash_password(password)
 
-        # Save password
         with open(self.config_path, "w+") as config_file:
             self.config_data["password"] = password_hash
             config_file.write("")
             json.dump(self.config_data, config_file, indent=4)
+
+        logging.info(" PASSWORD SUCCESSFULLY SET")
 
         print("------------------------------------")
 
@@ -76,6 +100,37 @@ class Config:
         expected_hash = self.config_data.get("password")
 
         if Encryption.verify_password(password, expected_hash):
+            self.update_password_attempts(True)
             return password
         else:
+            self.update_password_attempts(False)
             logging.error(" COMMAND DENIED")
+
+    # Update a users password attempts, returning if they have reached the limit
+    def update_password_attempts(self, correct_password: bool) -> bool:
+        if self.config_data.get("attempt_limit") is None:
+            return False
+
+        # User has set an attempt limit
+        attempts = int(self.config_data["attempts"]) + 1
+        attempt_limit = int(self.config_data["attempt_limit"])
+
+        if correct_password:
+            self.config_data["attempts"] = "0"
+            attempts = 0
+        else:
+            self.config_data["attempts"] = str(attempts)
+
+        # Save attempts and exit
+        if attempts < attempt_limit:
+            with open(self.config_path, "w+") as config_file:
+                config_file.write("")
+                json.dump(self.config_data, config_file, indent=4)
+                return False
+
+        # User has reached max failed attempts
+        vault_path = self.config_path.split("/")[0]
+        shutil.rmtree(vault_path)
+        logging.error(" ALL DATA HAS BEEN WIPED")
+
+        return True

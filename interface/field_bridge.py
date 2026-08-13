@@ -2,8 +2,9 @@ from services import Field
 
 
 class FieldBridge:
-    def __init__(self, args):
+    def __init__(self, args, vault_path="data/"):
         self.args = args
+        self.vault_path = vault_path
         self.command = self.determine_function()
 
     # Determine which function to call based on the command
@@ -20,7 +21,10 @@ class FieldBridge:
             and hasattr(args, "value")
         ):
             Field.set_field(
-                self.args.section_name, self.args.field_name, self.args.value
+                self.args.section_name,
+                self.args.field_name,
+                self.args.value,
+                vault_path=self.vault_path,
             )
             return "set"
 
@@ -31,7 +35,9 @@ class FieldBridge:
             and hasattr(args, "field_name")
         ):
             value = Field.get_value(
-                self.args.section_name, self.args.field_name
+                self.args.section_name,
+                self.args.field_name,
+                vault_path=self.vault_path,
             )
             if value is not None:
                 print(value)
@@ -44,7 +50,9 @@ class FieldBridge:
             and args.section_name
         ):
             list_output = Field.list_fields_in_section(
-                args.section_name, values=args.values
+                args.section_name,
+                values=args.values,
+                vault_path=self.vault_path,
             )
             if list_output:
                 print(list_output)
@@ -53,7 +61,9 @@ class FieldBridge:
 
         # field ls
         elif hasattr(args, "ls"):
-            list_output = Field.list_fields(values=args.values)
+            list_output = Field.list_fields(
+                values=args.values, vault_path=self.vault_path
+            )
             if list_output:
                 print(list_output)
 
@@ -61,5 +71,7 @@ class FieldBridge:
 
         # field rm [section_name] [field_name]
         elif hasattr(args, "rm") and args.section_name and args.field_name:
-            Field.remove_field(args.section_name, args.field_name)
+            Field.remove_field(
+                args.section_name, args.field_name, vault_path=self.vault_path
+            )
             return "rm"
