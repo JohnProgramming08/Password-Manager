@@ -49,20 +49,11 @@ class Config:
         return password
 
     # Set the maximum number of failed password attempts
-    def set_failed_attempts_limit(self) -> bool:
+    def set_attempt_limit(self, attempt_limit: int) -> bool:
         self.init_config_file()
 
-        print(
-            "Third parties may attempt to access your data. You can choose a failed password attempt limit that wipes data after x failed attempts"
-        )
-        keep_going = input("Would you like to set an attempt limit (Y/N)? ")
-        if keep_going != "Y":
-            return False
-
-        # User would like to set an attempt limit
-        attempt_limit = input("ATTEMPT LIMIT: ")
-        if not attempt_limit.isdigit() or int(attempt_limit) < 1:
-            logging.error(" YOUR INPUT MUST BE AN INTEGER")
+        if type(attempt_limit) != int or attempt_limit < 1:
+            logging.error(" ATTEMPT LIMIT MUST BE ABOVE 0")
             return False
 
         password = self.confirm_master_password()
@@ -71,8 +62,8 @@ class Config:
 
         # Save the users attempt limit
         with open(self.config_path, "w+") as config_file:
-            self.config_data["attempt_limit"] = attempt_limit
-            self.config_data["attempts"] = 0
+            self.config_data["attempt_limit"] = str(attempt_limit)
+            self.config_data["attempts"] = "0"
             config_file.write("")
             json.dump(self.config_data, config_file, indent=4)
 
@@ -115,7 +106,7 @@ class Config:
 
     # Update a users password attempts, returning if they have reached the limit
     def update_password_attempts(self, correct_password: bool) -> bool:
-        if self.config_data.get("attempts_limit") is None:
+        if self.config_data.get("attempt_limit") is None:
             return False
 
         # User has set an attempt limit
@@ -124,10 +115,11 @@ class Config:
 
         if correct_password:
             self.config_data["attempts"] = "0"
+            attempts = 0
         else:
             self.config_data["attempts"] = str(attempts)
 
-        # Save attempts
+        # Save attempts and exit
         if attempts < attempt_limit:
             with open(self.config_path, "w+") as config_file:
                 config_file.write("")

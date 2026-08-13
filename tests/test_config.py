@@ -134,3 +134,86 @@ def test_confirm_master_password_nonexistent(monkeypatch, iterable, expected):
 
     os.remove("test/config.json")
     os.removedirs("test")
+
+
+# Setting a max number of failed password attempts
+def test_set_attempt_limit_valid(monkeypatch, filled_config_file):
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
+    service = Config(config_path="test/config.json")
+    assert service.set_attempt_limit(5) is True
+
+
+@pytest.mark.parametrize("attempt_limit", [-3, "67", 0, 0.4, 1.3])
+def test_set_attempt_limit_invalid1(
+    monkeypatch, filled_config_file, attempt_limit
+):
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
+    service = Config(config_path="test/config.json")
+    assert service.set_attempt_limit(attempt_limit) is False
+
+
+def test_set_attempt_limit_invalid2(monkeypatch, filled_config_file):
+    monkeypatch.setattr("getpass.getpass", lambda _: "sigma")
+    service = Config(config_path="test/config.json")
+    assert service.set_attempt_limit(3) is False
+
+
+def test_set_attempt_limit_empty(monkeypatch, empty_config_file):
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
+    service = Config(config_path="test/config.json")
+    assert service.set_attempt_limit(4) is True
+    assert service.set_attempt_limit("-2") is False
+
+    monkeypatch.setattr("getpass.getpass", lambda _: "sigma")
+    assert service.set_attempt_limit(3) is False
+
+
+def test_set_attempt_limit_nonexistant(monkeypatch):
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
+    service = Config(config_path="test/config.json")
+    assert service.set_attempt_limit(4) is True
+    assert service.set_attempt_limit("4") is False
+
+    monkeypatch.setattr("getpass.getpass", lambda _: "sigma")
+    assert service.set_attempt_limit(4) is False
+    os.remove("test/config.json")
+    os.removedirs("test")
+
+
+# Updating the users failed password attempts
+def test_update_password_attempts_valid1(attempt_limit_config):
+    service = Config(config_path="test/config.json")
+    service.config_data = {
+        "username": "test",
+        "attempt_limit": "3",
+        "attempts": "0",
+    }
+    assert service.update_password_attempts(True) is False
+    assert service.update_password_attempts(False) is False
+
+
+def test_update_password_attempts_valid2(attempt_limit_config):
+    service = Config(config_path="test/config.json")
+    service.config_data = {"username": "test"}
+    assert service.update_password_attempts(True) is False
+    assert service.update_password_attempts(False) is False
+
+
+def test_update_password_attempts_valid3(attempt_limit_config):
+    service = Config(config_path="test/config.json")
+    service.config_data = {
+        "username": "test",
+        "attempts_limit": "3",
+        "attempts": "2",
+    }
+    assert service.update_password_attempts(True) is False
+
+
+def test_update_password_attempts_invalid(attempt_limit_config):
+    service = Config(config_path="test/config.json")
+    service.config_data = {
+        "username": "test",
+        "attempt_limit": "3",
+        "attempts": "2",
+    }
+    assert service.update_password_attempts(False) is True

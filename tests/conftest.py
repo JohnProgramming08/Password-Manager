@@ -15,8 +15,11 @@ def empty_config_file():
     yield None
 
     # Remove file and directory after test
-    os.remove("test/config.json")
-    os.removedirs("test")
+    try:
+        os.remove("test/config.json")
+        os.removedirs("test")
+    except:
+        pass
 
 
 # Filled in config file at test/config.json
@@ -70,3 +73,14 @@ def many_empty_sections(filled_config_file):
             os.remove(f"test/{file_name}.json")
         except:
             pass
+
+
+# Filled in config with attempts limit and attempts set
+@pytest.fixture
+def attempt_limit_config(empty_config_file):
+    data = {"username": "test", "attempts_limit": "3", "attempts": "0"}
+    with open("test/config.json", "w") as config_file:
+        config_file.write("")
+        json.dump(data, config_file, indent=4)
+
+    yield None
