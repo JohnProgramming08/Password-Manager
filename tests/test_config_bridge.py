@@ -12,8 +12,22 @@ def test_none(empty_config_file):
 
 # config init
 def test_init(monkeypatch, empty_config_file):
-    monkeypatch.setattr("getpass.getpass", lambda _: "sigma")
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
 
-    args = SimpleNamespace(config="activated", command="init")
+    args = SimpleNamespace(config="activated", init="activated")
     config_bridge = ConfigBridge(args)
     assert config_bridge.command == "init"
+
+
+# config password attempt_limit [limit_value]
+def test_password_attempt_limit(monkeypatch):
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
+
+    args = SimpleNamespace(
+        config="activated",
+        password="activated",
+        attempt_limit="activated",
+        limit_value=3,
+    )
+    config_bridge = ConfigBridge(args)
+    assert config_bridge.command == "attempt_limit"

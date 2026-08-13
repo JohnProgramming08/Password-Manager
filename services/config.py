@@ -67,6 +67,8 @@ class Config:
             config_file.write("")
             json.dump(self.config_data, config_file, indent=4)
 
+        logging.info(" ATTEMPT LIMIT SUCCESSFULLY SET")
+
         return True
 
     # Ask the user to fill in the config file if not done so already
