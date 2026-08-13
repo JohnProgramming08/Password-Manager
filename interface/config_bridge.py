@@ -2,8 +2,9 @@ from services import Config
 
 
 class ConfigBridge:
-    def __init__(self, args):
+    def __init__(self, args, config_path="data/config.json"):
         self.args = args
+        self.config_path = config_path
         self.command = self.determine_function()
 
     # Determine which function to call based on the command
@@ -14,7 +15,7 @@ class ConfigBridge:
 
         # Config init
         if hasattr(args, "init"):
-            config_service = Config()
+            config_service = Config(config_path=self.config_path)
             config_service.init_config_file()
             return "init"
 
@@ -24,6 +25,6 @@ class ConfigBridge:
             and hasattr(args, "attempt_limit")
             and hasattr(args, "limit_value")
         ):
-            config_service = Config()
+            config_service = Config(config_path=self.config_path)
             config_service.set_attempt_limit(args.limit_value)
             return "attempt_limit"

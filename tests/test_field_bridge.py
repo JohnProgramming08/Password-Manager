@@ -22,7 +22,7 @@ def test_set(monkeypatch, filled_config_file):
         field_name="sigma",
         value="female",
     )
-    field_bridge = FieldBridge(args)
+    field_bridge = FieldBridge(args, vault_path="test/")
     assert field_bridge.command == "set"
 
 
@@ -35,13 +35,13 @@ def test_get(monkeypatch, filled_config_file):
         section_name="filled",
         field_name="cant",
     )
-    field_bridge = FieldBridge(args)
+    field_bridge = FieldBridge(args, vault_path="test/")
     assert field_bridge.command == "get"
 
 
 def test_ls(filled_config_file):
     args = SimpleNamespace(field="activated", ls="activated", values=False)
-    field_bridge = FieldBridge(args)
+    field_bridge = FieldBridge(args, vault_path="test/")
     assert field_bridge.command == "ls"
 
 
@@ -49,7 +49,7 @@ def test_ls_section(filled_config_file):
     args = SimpleNamespace(
         field="activated", ls="activated", section_name="config", values=False
     )
-    field_bridge = FieldBridge(args)
+    field_bridge = FieldBridge(args, vault_path="test/")
     assert field_bridge.command == "ls section"
 
 
@@ -61,5 +61,5 @@ def test_rm(monkeypatch, filled_section):
         section_name="filled",
         field_name="username",
     )
-    field_bridge = FieldBridge(args)
+    field_bridge = FieldBridge(args, vault_path="test/")
     assert field_bridge.command == "rm"
