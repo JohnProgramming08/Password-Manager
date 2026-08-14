@@ -20,11 +20,7 @@ class ConfigBridge:
             return "init"
 
         # config password attempt_limit [limit_value]
-        elif (
-            hasattr(args, "password")
-            and hasattr(args, "attempt_limit")
-            and hasattr(args, "limit_value")
-        ):
+        elif hasattr(args, "attempt_limit") and hasattr(args, "limit_value"):
             config_service = Config(config_path=self.config_path)
             config_service.set_attempt_limit(args.limit_value)
             return "attempt_limit"
