@@ -25,7 +25,6 @@ def test_password_attempt_limit(monkeypatch, empty_config_file):
 
     args = SimpleNamespace(
         config="activated",
-        password="activated",
         attempt_limit="activated",
         limit_value=3,
     )

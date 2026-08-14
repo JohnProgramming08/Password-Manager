@@ -8,8 +8,7 @@ class CLI:
         self.subparsers = self.parser.add_subparsers(help="subcommand help")
         self.init_config_parser()
         self.init_config_init_parser()
-        self.init_config_password()
-        self.init_config_password_attempt_limit_parser()
+        self.init_config_attempt_limit_parser()
         self.init_section_parser()
         self.init_section_create_parser()
         self.init_section_list_parser()
@@ -38,27 +37,13 @@ class CLI:
         )
         config_init_parser.set_defaults(init="activated")
 
-    # Config password parser
-    def init_config_password(self):
-        config_password_parser = self.config_subparsers.add_parser(
-            "password", help="master password configuration"
-        )
-        config_password_parser.set_defaults(password="activated")
-        self.config_password_subparsers = config_password_parser.add_subparsers(
-            help="subcommmand help"
-        )
-
     # Config password attempt_limit parser
-    def init_config_password_attempt_limit_parser(self):
-        config_password_attempt_limit_parser = (
-            self.config_password_subparsers.add_parser(
-                "attempt_limit", help="set a cap on failed password attempts"
-            )
+    def init_config_attempt_limit_parser(self):
+        config_attempt_limit_parser = self.config_subparsers.add_parser(
+            "attempt_limit", help="set a cap on failed password attempts"
         )
-        config_password_attempt_limit_parser.set_defaults(
-            attempt_limit="activated"
-        )
-        config_password_attempt_limit_parser.add_argument(
+        config_attempt_limit_parser.set_defaults(attempt_limit="activated")
+        config_attempt_limit_parser.add_argument(
             "limit_value", help="the value you want the limit to be", type=int
         )
 
