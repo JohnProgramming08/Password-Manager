@@ -75,7 +75,10 @@ class Sync:
             section_path = (
                 f"{self.users_path}/{self.password_hash}/{self.file_name}"
             )
-            with open(section_path, "w+") as file:
+            if not os.path.exists(section_path):
+                return {}
+
+            with open(section_path, "r") as file:
                 data = json.load(file)
 
             return data
