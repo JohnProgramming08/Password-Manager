@@ -134,8 +134,8 @@ def many_filled_sections_client(client):
 @pytest.fixture
 def many_users_app(app):
     with app.app_context():
-        Insert.insert_user("sigma", Encryption.hash_password("male"))
-        Insert.insert_user("Dylan", Encryption.hash_password("Scully"))
-        Insert.insert_user("top", Encryption.hash_password("grades"))
+        Insert.insert_user("sigma", "male")
+        Insert.insert_user("Dylan", "Scully")
+        Insert.insert_user("top", "grades")
 
     return app

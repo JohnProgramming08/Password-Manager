@@ -1,4 +1,4 @@
-from api.database import Insert, Select
+from api.database import Insert, Select, VerifyUser
 import pytest
 
 
@@ -41,3 +41,19 @@ def test_are_details_correct_valid(many_users_app, email_hash, password):
 def test_are_details_correct_invalid(many_users_app):
     with many_users_app.app_context():
         assert Select.are_details_correct("invalid", "wrong") is False
+
+
+# VerifyUser
+# Verifying the users details
+@pytest.mark.parametrize(
+    "email_hash, password",
+    [("sigma", "male"), ("Dylan", "Scully"), ("top", "grades"), ("new", "guy")],
+)
+def test_verify_valid(many_users_app, email_hash, password):
+    with many_users_app.app_context():
+        assert VerifyUser.verify(email_hash, password) is True
+
+
+def test_verify_invalid(many_users_app):
+    with many_users_app.app_context():
+        assert VerifyUser.verify("sigma", "nope") is False
