@@ -12,8 +12,8 @@ class Select:
     # Check if the users details are correct
     @staticmethod
     def are_details_correct(email_hash: str, password: str) -> bool:
-        found_user = User.query.filter(
-            (User.email_hash == email_hash)
-            & (Encryption.verify_password(password, User.password_hash))
-        ).first()
-        return found_user is not None
+        found_user = User.query.filter(User.email_hash == email_hash).first()
+        if found_user is None:
+            return False
+
+        return Encryption.verify_password(password, found_user.password_hash)

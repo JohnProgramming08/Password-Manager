@@ -3,6 +3,7 @@ import os
 import json
 from services import Config, Encryption
 from api import create_app
+from api.database import Insert
 
 
 # Empty config file at test/config.json
@@ -127,3 +128,14 @@ def many_filled_sections_client(client):
         path = f"users/67/{name}.json"
         os.remove(path)
     os.removedirs("users/67")
+
+
+# App with 3 users
+@pytest.fixture
+def many_users_app(app):
+    with app.app_context():
+        Insert.insert_user("sigma", Encryption.hash_password("male"))
+        Insert.insert_user("Dylan", Encryption.hash_password("Scully"))
+        Insert.insert_user("top", Encryption.hash_password("grades"))
+
+    return app
