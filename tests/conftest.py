@@ -95,6 +95,7 @@ def app():
             "TESTING": True,
             "WTF_CSRF_ENABLED": False,  # <--- Disable CSRF for easier testing
             "SECRET_KEY": "test-secret",
+            "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
         }
     )
     yield app
