@@ -13,4 +13,5 @@ dependencies = [
     "monkeypatch>=0.1rc3",
     "psycopg2>=2.9.12",
     "pytest>=9.1.1",
+    "requests>=2.34.2",
 ]

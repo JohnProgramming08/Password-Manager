@@ -1,5 +1,6 @@
 from api.database import Insert, Select, VerifyUser
 import pytest
+from services import Encryption
 
 
 # Insert
@@ -47,7 +48,12 @@ def test_are_details_correct_invalid(many_users_app):
 # Verifying the users details
 @pytest.mark.parametrize(
     "email_hash, password",
-    [("sigma", "male"), ("Dylan", "Scully"), ("top", "grades"), ("new", "guy")],
+    [
+        ("sigma", "male"),
+        ("Dylan", "Scully"),
+        ("top", "grades"),
+        ("new", "guy"),
+    ],
 )
 def test_verify_valid(many_users_app, email_hash, password):
     with many_users_app.app_context():
