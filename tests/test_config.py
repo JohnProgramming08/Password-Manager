@@ -217,3 +217,17 @@ def test_update_password_attempts_invalid(attempt_limit_config):
         "attempts": "2",
     }
     assert service.update_password_attempts(False) is True
+
+
+# Setting the users email
+def set_email_valid(monkeypatch, filled_config_file):
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
+    config_service = Config(config_path="test/config.json")
+    assert config_service.set_email("sigma@male.ru") is True
+    assert config_service.set_email("something else") is True
+
+
+def set_email_invalid(monkeypatch, filled_config_file):
+    monkeypatch.setattr("getpass.getpass", lambda _: "wrong")
+    config_service = Config(config_path="test/config.json")
+    assert config_service.set_email("sigma@male.ru") is False

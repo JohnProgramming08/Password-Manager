@@ -134,3 +134,21 @@ class Config:
         logging.error(" ALL DATA HAS BEEN WIPED")
 
         return True
+
+    # Allow the user to set an email
+    def set_email(self, email: str) -> bool:
+        self.init_config_file()
+        hashed_email = Encryption.hash_email(email)
+
+        password = self.confirm_master_password()
+        if password is None:
+            return False
+
+        # Password is vaild
+        self.config_data["email"] = hashed_email
+
+        with open(self.config_path, "w") as file:
+            file.write("")
+            json.dump(self.config_data, file, indent=4)
+
+        return True
