@@ -24,3 +24,9 @@ class ConfigBridge:
             config_service = Config(config_path=self.config_path)
             config_service.set_attempt_limit(args.limit_value)
             return "attempt_limit"
+
+        # config email [email_value]
+        elif hasattr(args, "email") and args.email_value:
+            config_service = Config(config_path=self.config_path)
+            config_service.set_email(args.email)
+            return "email"

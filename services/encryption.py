@@ -71,7 +71,7 @@ class Encryption:
     # Hash the given email with SHA256
     @staticmethod
     def hash_email(email: str) -> str:
-        full_hashed_email = str(
+        full_hashed_email = int(
             hashlib.sha256(email.encode("utf-8")).hexdigest(), 16
         )
 

@@ -9,6 +9,7 @@ class CLI:
         self.init_config_parser()
         self.init_config_init_parser()
         self.init_config_attempt_limit_parser()
+        self.init_config_email_parser()
         self.init_section_parser()
         self.init_section_create_parser()
         self.init_section_list_parser()
@@ -46,6 +47,14 @@ class CLI:
         config_attempt_limit_parser.add_argument(
             "limit_value", help="the value you want the limit to be", type=int
         )
+
+    # Config email parser
+    def init_config_email_parser(self):
+        config_email_parser = self.config_subparsers.add_parser(
+            "email", help="set your email"
+        )
+        config_email_parser.set_defaults(email="activated")
+        config_email_parser.add_argument("email_value", help="your email")
 
     # Section parser
     def init_section_parser(self):
