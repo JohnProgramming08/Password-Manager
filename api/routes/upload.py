@@ -6,11 +6,11 @@ upload_bp = Blueprint("upload", __name__)
 
 
 # Maybe with users path as well for testing idk
-@upload_bp.route(
-    "/upload/<email_hash>/<password>/<file_name>", methods=["POST"]
-)
-def upload(email_hash: str, password: str, file_name: str):
-    file_contents = request.get_json()
+@upload_bp.route("/upload/<email_hash>/<file_name>", methods=["POST"])
+def upload(email_hash: str, file_name: str):
+    data = request.get_json()
+    file_contents = data.get("file_contents")
+    password = data.get("password")
 
     # Ensure user details are valid
     if not VerifyUser.verify(email_hash, password):

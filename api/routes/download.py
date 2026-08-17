@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from api.sync import Sync
 from api.database import VerifyUser
 
@@ -7,10 +7,11 @@ download_bp = Blueprint("download", __name__)
 
 # Maybe with users path as well for testing idk
 # Download the data from an individual section
-@download_bp.route(
-    "/download_file/<email_hash>/<password>/<file_name>", methods=["POST"]
-)
-def download_file(email_hash: str, password: str, file_name: str):
+@download_bp.route("/download_file/<email_hash>/<file_name>", methods=["POST"])
+def download_file(email_hash: str, file_name: str):
+    data = request.get_json()
+    password = data.get("password")
+
     # Ensure user details are valid
     if not VerifyUser.verify(email_hash, password):
         return jsonify({})
@@ -22,8 +23,11 @@ def download_file(email_hash: str, password: str, file_name: str):
 
 
 # Fetch all sections the user has uploaded
-@download_bp.route("/list_sections/<email_hash>/<password>", methods=["POST"])
-def list_sections(email_hash: str, password: str):
+@download_bp.route("/list_sections/<email_hash>", methods=["POST"])
+def list_sections(email_hash: str):
+    data = request.get_json()
+    password = data.get("password")
+
     # Ensure user details are valid
     if not VerifyUser.verify(email_hash, password):
         return jsonify({})
