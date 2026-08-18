@@ -152,3 +152,9 @@ class Config:
             json.dump(self.config_data, file, indent=4)
 
         return True
+
+    # Fetch the users email hash
+    def get_email_hash(self) -> str | None:
+        self.init_config_file()
+
+        return self.config_data.get("email")

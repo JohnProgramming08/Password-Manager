@@ -80,7 +80,25 @@ def many_empty_sections(filled_config_file):
 # Filled in config with attempts limit and attempts set
 @pytest.fixture
 def attempt_limit_config(empty_config_file):
-    data = {"username": "test", "attempts_limit": "3", "attempts": "0"}
+    data = {
+        "password": Encryption.hash_password("test"),
+        "attempts_limit": "3",
+        "attempts": "0",
+    }
+    with open("test/config.json", "w") as config_file:
+        config_file.write("")
+        json.dump(data, config_file, indent=4)
+
+    yield None
+
+
+# Filled in config with email set
+@pytest.fixture
+def email_config(empty_config_file):
+    data = {
+        "password": Encryption.hash_password("test"),
+        "email": Encryption.hash_email("test@gmail.com"),
+    }
     with open("test/config.json", "w") as config_file:
         config_file.write("")
         json.dump(data, config_file, indent=4)

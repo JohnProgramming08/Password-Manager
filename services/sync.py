@@ -5,13 +5,13 @@ from services import Config, Encryption
 
 
 class Sync:
-    def __init__(self, remote_url: str, email: str, vault_path="data"):
+    def __init__(self, remote_url: str, vault_path="data"):
         self.remote_url = remote_url
         self.vault_path = vault_path
-        self.email_hash = Encryption.hash_email(email)
 
         config = Config(config_path=f"{vault_path}/config.json")
         self.password = config.confirm_master_password()
+        self.email_hash = config.get_email_hash()
 
     # Upload the given file to the remote, returning if successful
     def upload_file(self, file_name: str) -> int:
@@ -30,7 +30,7 @@ class Sync:
 
     # Upload all of the users data to the remote, returning if successful
     def push(self) -> bool:
-        if self.password is None:
+        if self.password is None or self.email_hash is None:
             return False
 
         sections = os.listdir(self.vault_path)
@@ -70,7 +70,7 @@ class Sync:
 
     # Download all backed up data, returning if successful
     def pull(self) -> bool:
-        if self.password is None:
+        if self.password is None or self.email_hash is None:
             return False
 
         file_names = self.get_file_names()
