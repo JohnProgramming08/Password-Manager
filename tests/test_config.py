@@ -220,14 +220,31 @@ def test_update_password_attempts_invalid(attempt_limit_config):
 
 
 # Setting the users email
-def set_email_valid(monkeypatch, filled_config_file):
+def test_set_email_valid(monkeypatch, filled_config_file):
     monkeypatch.setattr("getpass.getpass", lambda _: "test")
     config_service = Config(config_path="test/config.json")
     assert config_service.set_email("sigma@male.ru") is True
     assert config_service.set_email("something else") is True
 
 
-def set_email_invalid(monkeypatch, filled_config_file):
+def test_set_email_invalid(monkeypatch, filled_config_file):
     monkeypatch.setattr("getpass.getpass", lambda _: "wrong")
     config_service = Config(config_path="test/config.json")
     assert config_service.set_email("sigma@male.ru") is False
+
+
+# Getting the users email hash
+def test_get_email_invalid1(filled_config_file):
+    config_service = Config(config_path="test/config.json")
+    assert config_service.get_email_hash() is None
+
+
+def test_get_email_invalid2(monkeypatch, empty_config_file):
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
+    config_service = Config(config_path="test/config.json")
+    assert config_service.get_email_hash() is None
+
+
+def test_get_email_valid(email_config):
+    config_service = Config(config_path="test/config.json")
+    assert config_service.get_email_hash() is not None
