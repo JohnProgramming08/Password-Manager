@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from api.sync import Sync
 from api.database import VerifyUser
+import json
 
 download_bp = Blueprint("download", __name__)
 
@@ -9,7 +10,7 @@ download_bp = Blueprint("download", __name__)
 # Download the data from an individual section
 @download_bp.route("/download_file/<email_hash>/<file_name>", methods=["POST"])
 def download_file(email_hash: str, file_name: str):
-    data = request.get_json()
+    data = json.loads(request.get_json())
     password = data.get("password")
 
     # Ensure user details are valid
@@ -25,7 +26,7 @@ def download_file(email_hash: str, file_name: str):
 # Fetch all sections the user has uploaded
 @download_bp.route("/list_sections/<email_hash>", methods=["POST"])
 def list_sections(email_hash: str):
-    data = request.get_json()
+    data = json.loads(request.get_json())
     password = data.get("password")
 
     # Ensure user details are valid

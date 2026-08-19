@@ -75,4 +75,6 @@ class Encryption:
             hashlib.sha256(email.encode("utf-8")).hexdigest(), 16
         )
 
-        return str(full_hashed_email)
+        hashed_email = full_hashed_email % 100000000
+
+        return str(hashed_email)

@@ -10,6 +10,9 @@ class CLI:
         self.init_config_init_parser()
         self.init_config_attempt_limit_parser()
         self.init_config_email_parser()
+        self.init_sync_parser()
+        self.init_sync_push_parser()
+        self.init_sync_pull_parser()
         self.init_section_parser()
         self.init_section_create_parser()
         self.init_section_list_parser()
@@ -55,6 +58,30 @@ class CLI:
         )
         config_email_parser.set_defaults(email="activated")
         config_email_parser.add_argument("email_value", help="your email")
+
+    # Sync parser
+    def init_sync_parser(self):
+        sync_parser = self.subparsers.add_parser(
+            "sync", help="password manager sync remote commands"
+        )
+        sync_parser.set_defaults(sync="activated")
+        self.sync_subparsers = sync_parser.add_subparsers(
+            help="subcommand help"
+        )
+
+    # sync push parser
+    def init_sync_push_parser(self):
+        sync_push_parser = self.sync_subparsers.add_parser(
+            "push", help="push local data to remote"
+        )
+        sync_push_parser.set_defaults(push="activated")
+
+    # sync pull parser
+    def init_sync_pull_parser(self):
+        sync_pull_parser = self.sync_subparsers.add_parser(
+            "pull", help="pull remote data to local"
+        )
+        sync_pull_parser.set_defaults(pull="activated")
 
     # Section parser
     def init_section_parser(self):

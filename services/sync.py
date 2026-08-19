@@ -24,7 +24,7 @@ class Sync:
         payload_json = json.dumps(payload)
 
         url = f"{self.remote_url}/upload/{self.email_hash}/{file_name}"
-        response = requests.post(url, data=payload_json)
+        response = requests.post(url, json=payload_json)
 
         return response.status_code
 
@@ -35,8 +35,9 @@ class Sync:
 
         sections = os.listdir(self.vault_path)
         for file_name in sections:
-            upload_success = self.upload_file(file_name) == 200
-            if not upload_success:
+            status_code = self.upload_file(file_name)
+            print(status_code)
+            if status_code != 200:
                 return False
 
         return True
@@ -45,7 +46,7 @@ class Sync:
     def download_file(self, file_name: str) -> int:
         payload_json = json.dumps({"password": self.password})
         url = f"{self.remote_url}/download_file/{self.email_hash}/{file_name}"
-        response = requests.post(url, data=payload_json)
+        response = requests.post(url, json=payload_json)
 
         try:
             data = response.json()
@@ -63,7 +64,7 @@ class Sync:
     def get_file_names(self) -> list:
         payload_json = json.dumps({"password": self.password})
         url = f"{self.remote_url}/list_sections/{self.email_hash}"
-        response = requests.post(url, data=payload_json)
+        response = requests.post(url, json=payload_json)
 
         data_dict = response.json()
         return [key for key in data_dict]

@@ -1,4 +1,4 @@
-from interface import CLI, ConfigBridge, SectionBridge, FieldBridge
+from interface import CLI, ConfigBridge, SectionBridge, FieldBridge, SyncBridge
 from services import Config, Section, Field
 import logging
 
@@ -15,6 +15,8 @@ def main():
         bridge = SectionBridge(args)
     if hasattr(args, "field"):
         bridge = FieldBridge(args)
+    if hasattr(args, "sync"):
+        bridge = SyncBridge(args)
 
 
 if __name__ == "__main__":
