@@ -2,6 +2,8 @@ import pytest
 import os
 import json
 from services import Config, Encryption
+from api import create_app
+from api.database import Insert
 
 
 # Empty config file at test/config.json
@@ -78,9 +80,80 @@ def many_empty_sections(filled_config_file):
 # Filled in config with attempts limit and attempts set
 @pytest.fixture
 def attempt_limit_config(empty_config_file):
-    data = {"username": "test", "attempts_limit": "3", "attempts": "0"}
+    data = {
+        "password": Encryption.hash_password("test"),
+        "attempts_limit": "3",
+        "attempts": "0",
+    }
     with open("test/config.json", "w") as config_file:
         config_file.write("")
         json.dump(data, config_file, indent=4)
 
     yield None
+
+
+# Filled in config with email set
+@pytest.fixture
+def email_config(empty_config_file):
+    data = {
+        "password": Encryption.hash_password("test"),
+        "email": Encryption.hash_email("test@gmail.com"),
+    }
+    with open("test/config.json", "w") as config_file:
+        config_file.write("")
+        json.dump(data, config_file, indent=4)
+
+    yield None
+
+
+# API testing
+@pytest.fixture
+def app():
+    app = create_app(
+        {
+            "TESTING": True,
+            "WTF_CSRF_ENABLED": False,  # <--- Disable CSRF for easier testing
+            "SECRET_KEY": "test-secret",
+            "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
+        }
+    )
+    yield app
+
+
+@pytest.fixture
+def client(app):
+    res_client = app.test_client()
+
+    return res_client
+
+
+# Client with 3 filled sections under hash 67
+@pytest.fixture
+def many_filled_sections_client(client):
+    test_data = {"super": "sigma", "iron": "man", "tony": "stark"}
+    section_names = ["one", "two", "three"]
+
+    os.makedirs("users/67")
+    for name in section_names:
+        path = f"users/67/{name}.json"
+        file = open(path, "w")
+        json.dump(test_data, file, indent=4)
+        file.close()
+
+    yield client
+
+    for name in section_names:
+        path = f"users/67/{name}.json"
+        os.remove(path)
+    os.removedirs("users/67")
+
+
+# App with 3 users
+@pytest.fixture
+def many_users_app(app):
+    with app.app_context():
+        Insert.insert_user("sigma", "male")
+        Insert.insert_user("Dylan", "Scully")
+        Insert.insert_user("top", "grades")
+
+    return app

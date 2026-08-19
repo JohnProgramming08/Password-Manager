@@ -30,3 +30,14 @@ def test_password_attempt_limit(monkeypatch, empty_config_file):
     )
     config_bridge = ConfigBridge(args, config_path="test/config.json")
     assert config_bridge.command == "attempt_limit"
+
+
+# config email [email_value]
+def test_email(monkeypatch, empty_config_file):
+    monkeypatch.setattr("getpass.getpass", lambda _: "test")
+
+    args = SimpleNamespace(
+        config="activated", email="activated", email_value="sigma@female.ru"
+    )
+    config_bridge = ConfigBridge(args, config_path="test/config.json")
+    assert config_bridge.command == "email"
