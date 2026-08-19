@@ -1,6 +1,7 @@
 import json
 import requests
 import os
+import logging
 from services import Config, Encryption
 
 
@@ -36,9 +37,12 @@ class Sync:
         sections = os.listdir(self.vault_path)
         for file_name in sections:
             status_code = self.upload_file(file_name)
-            print(status_code)
             if status_code != 200:
+                logging.error(" NOT ALL FILES COULD BE SUCCESSFULLY UPLOADED")
                 return False
+            else:
+                section_name = file_name.split(".")[0]
+                logging.info(f" {section_name} SUCCESSFULLY UPLOADED")
 
         return True
 
@@ -79,6 +83,10 @@ class Sync:
         for name in file_names:
             status_code = self.download_file(name)
             if status_code != 200:
+                logging.error(" NOT ALL FILES COULD BE SUCCESSFULLY DOWNLOADED")
                 return False
+            else:
+                section_name = name.split(".")[0]
+                logging.info(f" {section_name} SUCCESSFULLY DOWNLOADED")
 
         return True
