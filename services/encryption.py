@@ -25,7 +25,7 @@ class Encryption:
     def verify_password(password: str, expected_hash: str) -> bool:
         hasher = PasswordHasher(
             time_cost=3,
-            memory_cost=65536,  # 64 MB
+            memory_cost=65536,  # 64 MiB
             parallelism=4,
             hash_len=32,
             salt_len=16,
@@ -40,9 +40,12 @@ class Encryption:
     # Generate the encryption/decryption key from the master password
     @staticmethod
     def generate_key(password: str) -> bin:
+        salt = "saltywalty123456"
+        password = salt + password
         full_hashed_password = int(
             hashlib.sha256(password.encode("utf-8")).hexdigest(), 16
         )
+
         password_hash = full_hashed_password % (10**32)
         password_hash_binary = str(password_hash).encode("utf-8")
 
