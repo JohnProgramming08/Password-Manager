@@ -2,6 +2,7 @@ import hashlib
 from cryptography.fernet import Fernet
 import base64
 from argon2 import PasswordHasher
+from argon2.low_level import hash_secret_raw, Type
 
 
 class Encryption:
@@ -25,7 +26,7 @@ class Encryption:
     def verify_password(password: str, expected_hash: str) -> bool:
         hasher = PasswordHasher(
             time_cost=3,
-            memory_cost=65536,  # 64 MB
+            memory_cost=65536,  # 64 MiB
             parallelism=4,
             hash_len=32,
             salt_len=16,
@@ -40,14 +41,19 @@ class Encryption:
     # Generate the encryption/decryption key from the master password
     @staticmethod
     def generate_key(password: str) -> bin:
-        full_hashed_password = int(
-            hashlib.sha256(password.encode("utf-8")).hexdigest(), 16
+        FIXED_SALT = b"saltywalty123456"
+        raw_key = hash_secret_raw(
+            secret=password.encode(),
+            salt=FIXED_SALT,
+            time_cost=3,
+            memory_cost=64 * 1024,  # 64 MiB
+            parallelism=1,
+            hash_len=32,
+            type=Type.ID,
         )
-        password_hash = full_hashed_password % (10**32)
-        password_hash_binary = str(password_hash).encode("utf-8")
+        fernet_key = base64.urlsafe_b64encode(raw_key)
 
-        encoded_hash = base64.urlsafe_b64encode(password_hash_binary)
-        return encoded_hash
+        return fernet_key
 
     # Encrypt the given string using the users encryption key
     @staticmethod
